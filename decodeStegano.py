@@ -5,11 +5,11 @@ import cv2
 
 img = cv2.imread('output.png')
 
-
+'''
 cv2.imshow('input',img)
 cv2.waitKey()
 cv2.destroyAllWindows()
-
+'''
 
 height,width,channels = img.shape
 
