@@ -3,6 +3,21 @@
 
 import cv2
 
+def decrypt(msg,password):
+    msgList = list(msg)
+    pswdList = list(password)
+    msglen = len(msgList)
+    pswdlen = len(pswdList)
+
+    pswdPos = 0
+    for i in range(msglen):
+        if(pswdPos==len(pswdList)):
+            pswdPos=0
+        msgList[i]= chr(ord(msgList[i])-ord(pswdList[pswdPos]))
+        pswdPos+=1
+
+    return (''.join(msgList))
+
 img = cv2.imread('output.png')
 
 '''
@@ -33,3 +48,9 @@ for i in range(height):
         break
 
 print(msg)
+
+password = input('Enter password: ')
+
+finalMsg = decrypt(msg,password)
+
+print(finalMsg)
