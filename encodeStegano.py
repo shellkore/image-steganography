@@ -27,6 +27,14 @@ def splitToBgr(val):
 msg=input('Enter your message:')
 msglen = len(msg)
 
+password = input('Enter password:')
+
+passwordLen = len(password)
+
+passwordCharPos = 0
+for i in msglen:
+    msg[i]+=password[passwordCharPos]
+
 bitlist=[]
 for i in range(msglen):
     bitlist.append(splitToBgr(ord(msg[i])))
