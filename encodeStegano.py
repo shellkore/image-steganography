@@ -6,18 +6,6 @@
 
 import cv2
 
-img = cv2.imread('input.png')
-
-'''
-cv2.imshow('input',img)
-cv2.waitKey()
-cv2.destroyAllWindows()
-'''
-
-height,width,channels = img.shape
-
-height,width,channels
-
 def splitToBgr(val):
     b=(val&0xE0)>>5
     g=(val&0x1C)>>2
@@ -39,40 +27,48 @@ def encrypt(msg,password):
 
     return (''.join(msgList))
 
-msg=input('Enter your message:')
-msglen = len(msg)
-password = input('Enter password:')
+def encode(msg,password,inputImg = 'input.png',outputImg='output.png'):
+    img = cv2.imread(inputImg)
+    height,width,channels = img.shape
+    # height,width,channels
+    msg = encrypt(msg,password)
+    print(f'your encrypted msg is: {msg}')
+    bitlist=[]
+    msglen = len(msg)
+    for i in range(msglen):
+        bitlist.append(splitToBgr(ord(msg[i])))
 
-msg = encrypt(msg,password)
-print(f'your encrypted msg is: {msg}')
+    firstbit = splitToBgr(msglen)
 
-bitlist=[]
-for i in range(msglen):
-    bitlist.append(splitToBgr(ord(msg[i])))
+    def clearLSB3(val):
+        return (val&0xF8)
 
-firstbit = splitToBgr(msglen)
+    def encode(imgbit,msgbit):
+        return (msgbit | clearLSB3(imgbit))
 
-def clearLSB3(val):
-    return (val&0xF8)
+    for i in range(3):
+        img[0,0][i]=encode(img[0,0][i],firstbit[i])
 
-def encode(imgbit,msgbit):
-    return (msgbit | clearLSB3(imgbit))
-
-for i in range(3):
-    img[0,0][i]=encode(img[0,0][i],firstbit[i])
-
-c=0
-f=0
-for i in range(height):
-    for j in range(1,width):
-        if (c==msglen):
-            f=1
+    c=0
+    f=0
+    for i in range(height):
+        for j in range(1,width):
+            if (c==msglen):
+                f=1
+                break
+            for k in range(3):
+                img[i,j][k]=encode(img[i,j][k],bitlist[c][k])
+            print(img[i,j])
+            c+=1
+        if(f==1):
             break
-        for k in range(3):
-            img[i,j][k]=encode(img[i,j][k],bitlist[c][k])
-        print(img[i,j])
-        c+=1
-    if(f==1):
-        break
 
-cv2.imwrite('output.png',img)
+    cv2.imwrite(outputImg,img)
+
+def main():
+    msg=input('Enter your message:')
+    password = input('Enter password:')
+    encode(msg,password)
+
+if __name__ == '__main__':
+    main()

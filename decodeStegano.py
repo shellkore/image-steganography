@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import cv2
 
 def decrypt(msg,password):
@@ -18,39 +15,36 @@ def decrypt(msg,password):
 
     return (''.join(msgList))
 
-img = cv2.imread('output.png')
+def decode(password,inputImg = 'output.png'):
+    img = cv2.imread(inputImg)
 
-'''
-cv2.imshow('input',img)
-cv2.waitKey()
-cv2.destroyAllWindows()
-'''
+    height,width,channels = img.shape
 
-height,width,channels = img.shape
+    def jointomsg(imgbit):
+        ans = ((imgbit[0]&7)<<5)|((imgbit[1]&7)<<2)|(imgbit[2]&3)
+        return ans
 
-def jointomsg(imgbit):
-    ans = ((imgbit[0]&7)<<5)|((imgbit[1]&7)<<2)|(imgbit[2]&3)
-    return ans
+    msglen = jointomsg(img[0,0])
 
-msglen = jointomsg(img[0,0])
-
-c=0
-f=0
-msg=''
-for i in range(height):
-    for j in range(1,width):
-        if(c==msglen):
-            f=1
+    c=0
+    f=0
+    msg=''
+    for i in range(height):
+        for j in range(1,width):
+            if(c==msglen):
+                f=1
+                break
+            msg+=chr(jointomsg(img[i,j]))
+            c+=1
+        if(f==1):
             break
-        msg+=chr(jointomsg(img[i,j]))
-        c+=1
-    if(f==1):
-        break
 
-print(msg)
+    finalMsg = decrypt(msg,password)
+    return(finalMsg)
 
-password = input('Enter password: ')
+def main():
+    password = input('Enter password: ')
+    print('hidden message is :',decode(password))
 
-finalMsg = decrypt(msg,password)
-
-print(finalMsg)
+if __name__ == '__main__':
+    main()
