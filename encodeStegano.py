@@ -24,16 +24,27 @@ def splitToBgr(val):
     r=(val&0x3)
     return ([b,g,r])
 
+def encrypt(msg,password):
+    msgList = list(msg)
+    pswdList = list(password)
+    msglen = len(msgList)
+    pswdlen = len(pswdList)
+
+    pswdPos = 0
+    for i in range(msglen):
+        if(pswdPos==len(pswdList)):
+            pswdPos=0
+        msgList[i]= chr(ord(msgList[i])+ord(pswdList[pswdPos]))
+        pswdPos+=1
+
+    return (''.join(msgList))
+
 msg=input('Enter your message:')
 msglen = len(msg)
-
 password = input('Enter password:')
 
-passwordLen = len(password)
-
-passwordCharPos = 0
-for i in msglen:
-    msg[i]+=password[passwordCharPos]
+msg = encrypt(msg,password)
+print(f'your encrypted msg is: {msg}')
 
 bitlist=[]
 for i in range(msglen):
