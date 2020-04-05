@@ -18,7 +18,7 @@ height,width,channels = img.shape
 
 height,width,channels
 
-def splittobgr(val):
+def splitToBgr(val):
     b=(val&0xE0)>>5
     g=(val&0x1C)>>2
     r=(val&0x3)
@@ -29,9 +29,9 @@ msglen = len(msg)
 
 bitlist=[]
 for i in range(msglen):
-    bitlist.append(splittobgr(ord(msg[i])))
+    bitlist.append(splitToBgr(ord(msg[i])))
 
-firstbit = splittobgr(msglen)
+firstbit = splitToBgr(msglen)
 
 def clearLSB3(val):
     return (val&0xF8)
